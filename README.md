@@ -17,3 +17,10 @@ Telegram üzerinden günlük yemek takibini yapabileceğiniz ve takibini yapmak 
  
 
 <img width="643" alt="Screenshot 2022-12-05 at 00 10 58" src="https://user-images.githubusercontent.com/113470792/207204368-8e20a3f5-8e93-486d-aca7-cf53cb381a44.png">
+
+### Katkı sağlayanlar:
+
+[Arda Aydın Kılınç](https://github.com/adraarda23)
+[Efekan Aksoy](https://github.com/rosebud42)
+[Fatih Parmaksız](https://github.com/FatihParm)
+
