@@ -1,2 +1,4 @@
 database.db
-./__pycache__
+__pycache__/
+env/
+pdfs/
