@@ -1,5 +1,4 @@
 import csv
-import datetime
 
 class Menu():
     def __init__(self):
@@ -15,7 +14,6 @@ class Menu():
       return status, z
 
     def get_menu(self):
-        x = 2 + datetime.datetime.now().day
         y = 1
         date = []
         newList3 = []
