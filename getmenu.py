@@ -17,7 +17,6 @@ class Menu():
     def get_menu(self):
         x = 2 + datetime.datetime.now().day
         y = 1
-        newList = []
         date = []
         newList3 = []
         status, z = self.read_csv()
