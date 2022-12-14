@@ -1,6 +1,5 @@
 import csv
 import datetime
-from itertools import cycle, islice
 
 class Menu():
     def __init__(self):
@@ -28,8 +27,6 @@ class Menu():
             row2 = [status[y][2], status[y][3], status[y][4], status[y][5]]
             row2 = "\n".join(row2)
             newList3.append(row2)
-        newList, newDate = islice(newList, x - 3, None), islice(date, x - 3, None)
-        newList, newDate = cycle(newList), cycle(newDate)
         newList4 = []
         timer2 = 0
         for t in newList3:
