@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 from tabula import read_pdf
 from tabula import convert_into
+import os
 
 class GetPdf:
     def __init__(self):
@@ -26,5 +27,5 @@ class GetPdf:
     def convert_pdf(self):
         df = read_pdf("pdf62.pdf", pages='all')[0]
         convert_into("pdf62.pdf", "yemekhane.csv", output_format="csv", pages='all')
-GetPdf().get_pdf()
-GetPdf().convert_pdf()
+        os.rename("pdf62.pdf", "pdfs/pdf62.pdf")
+    
