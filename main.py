@@ -7,6 +7,7 @@ import requests
 import getmenu
 import getpdf
 import os
+import time
 
 yearr = datetime.datetime.now().year
 monthh = datetime.datetime.now().month
@@ -38,10 +39,11 @@ j = updater.job_queue
 
 
 def restart_every_month(context: CallbackContext):
-  os.system("remove yemekhane.csv")
+  os.system("rm yemekhane.csv")
+  time.sleep(60)
   os.system("kill 1")
   
-j.run_monthly(restart_every_month, datetime.datetime(yearr, monthh, 1,tzinfo=pytz.timezone('Europe/Istanbul')),day=1)
+j.run_monthly(restart_every_month, datetime.datetime(2022, 12,1,tzinfo=pytz.timezone('Europe/Istanbul')),day=1)
 
 def start(update, context):
   update.message.reply_text(
@@ -98,11 +100,13 @@ def abonelik(update, context):
   check_id = models.check_person(id)
   if check_id is None:
     models.add_user(id, first_name, last_name)
-    update.message.reply_text(
-      f"Abonelik kaydınız oluşturuldu! Her gün Saat 09:00'da günün menüsü sizinle paylaşılacaktır."
-    )
+    text="Abonelik kaydınız oluşturuldu! Her gün Saat 09:00'da günün menüsü sizinle paylaşılacaktır."
+    url = f"https://api.telegram.org/bot{Token}/sendMessage?chat_id={id}&text={text}"
+    requests.get(url).json()
   else:
-    update.message.reply_text(f"Zaten aboneliğiniz bulunmaktadır.")
+    text="Zaten aboneliğiniz bulunmaktadır."
+    url = f"https://api.telegram.org/bot{Token}/sendMessage?chat_id={id}&text={text}"
+    requests.get(url).json()
 
 def abonelikiptal(update, context):
   user = update.message.from_user
@@ -110,10 +114,14 @@ def abonelikiptal(update, context):
   check_id = models.check_person(id)
   print(check_id)
   if check_id is None:
-    update.message.reply_text(f"Aboneliğiniz bulunmamaktadır.")
+    text="Aboneliğiniz bulunmamaktadır."
+    url = f"https://api.telegram.org/bot{Token}/sendMessage?chat_id={id}&text={text}"
+    requests.get(url).json()
   else:
     models.delete_person(id)
-    update.message.reply_text(f"Aboneliğiniz iptal edilmiştir.")
+    text="Aboneliğiniz iptal edilmiştir."
+    url = f"https://api.telegram.org/bot{Token}/sendMessage?chat_id={id}&text={text}"
+    requests.get(url).json()
 
 
 
