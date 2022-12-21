@@ -1,12 +1,20 @@
 import telegram.ext
 import datetime
-from itertools import islice, cycle
 from telegram.ext import CallbackContext
 from model import Models
 import pytz
 import requests
 import getmenu
 import getpdf
+import os
+
+yearr = datetime.datetime.now().year
+monthh = datetime.datetime.now().month
+if monthh == 12:
+  monthh = 1
+  yearr += 1
+else:
+  monthh += 1
 
 try:
   newList4, date = getmenu.Menu().get_menu()
@@ -28,6 +36,12 @@ updater = telegram.ext.Updater(
 dispatcher = updater.dispatcher
 j = updater.job_queue
 
+
+def restart_every_month(context: CallbackContext):
+  os.system("remove yemekhane.csv")
+  os.system("kill 1")
+  
+j.run_monthly(restart_every_month, datetime.datetime(yearr, monthh, 1,tzinfo=pytz.timezone('Europe/Istanbul')),day=1)
 
 def start(update, context):
   update.message.reply_text(
@@ -74,7 +88,7 @@ def morning(context: CallbackContext):
     except:
       print(f"{id} abone olmus ama yetki vermemis")
       i += 1
-j.run_daily(morning, datetime.time(hour=4, minute=4, tzinfo=pytz.timezone('Europe/Istanbul')), days=(0, 1, 2, 3, 4, 5, 6))
+j.run_daily(morning, datetime.time(hour=9, minute=0, tzinfo=pytz.timezone('Europe/Istanbul')), days=(0, 1, 2, 3, 4, 5, 6))
 
 def abonelik(update, context):
   user = update.message.from_user
@@ -90,7 +104,6 @@ def abonelik(update, context):
   else:
     update.message.reply_text(f"Zaten aboneliğiniz bulunmaktadır.")
 
-
 def abonelikiptal(update, context):
   user = update.message.from_user
   id = user["id"]
@@ -103,13 +116,14 @@ def abonelikiptal(update, context):
     update.message.reply_text(f"Aboneliğiniz iptal edilmiştir.")
 
 
+
+
+
 dispatcher.add_handler(telegram.ext.CommandHandler('start', start))
-#dispatcher.add_handler(telegram.ext.CommandHandler('mesajat', mesajat))
 dispatcher.add_handler(telegram.ext.CommandHandler('menu', getmenu))
 dispatcher.add_handler(telegram.ext.CommandHandler('help', help))
 dispatcher.add_handler(telegram.ext.CommandHandler('abonelik', abonelik))
-dispatcher.add_handler(
-  telegram.ext.CommandHandler('abonelikiptal', abonelikiptal))
+dispatcher.add_handler(telegram.ext.CommandHandler('abonelikiptal', abonelikiptal))
 
 updater.start_polling()
 updater.idle()
