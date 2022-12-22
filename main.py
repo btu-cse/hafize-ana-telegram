@@ -43,8 +43,8 @@ def restart_every_month(context: CallbackContext):
 
 
 j.run_monthly(restart_every_month,
-              datetime.datetime(2022,
-                                12,
+              datetime.datetime(yearr,
+                                monthh,
                                 1,
                                 tzinfo=pytz.timezone('Europe/Istanbul')),
               day=1)
