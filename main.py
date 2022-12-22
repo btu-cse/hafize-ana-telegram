@@ -25,7 +25,7 @@ except:
   newList4, date = getmenu.Menu().get_menu()
 
 t = True
-Token = "5563013111:AAEqy7baa_AIzWkz-uFtRPi9M8W7vDN9WS0"
+Token = "TOKEN"
 
 models = Models()
 models.create_table()
@@ -33,7 +33,7 @@ models.create_table()
 
 
 updater = telegram.ext.Updater(
-  "5563013111:AAEqy7baa_AIzWkz-uFtRPi9M8W7vDN9WS0", use_context=True)
+  "TOKEN", use_context=True)
 dispatcher = updater.dispatcher
 j = updater.job_queue
 
