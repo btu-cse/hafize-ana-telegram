@@ -26,3 +26,5 @@ Telegram üzerinden günlük yemek takibini yapabileceğiniz ve takibini yapmak 
 
 [Fatih Parmaksız](https://github.com/FatihParm)
 
+[Sefa Eren](https://github.com/riatorz)
+
