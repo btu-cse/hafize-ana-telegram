@@ -1,5 +1,10 @@
 # hafize-ana-telegram
 Telegram üzerinden günlük yemek takibini yapabileceğiniz ve takibini yapmak üzere abonelik oluşturabileceğiniz telegram botu
+<div align="left">
+  <img src="https://raw.githubusercontent.com/maurodesouza/profile-readme-generator/master/src/assets/icons/social/telegram/default.svg" width="52" height="40" alt="telegram logo"/> CHAT WITH BOT
+</div>
+
+###
 ## Projenin Amacı : Bursa Teknik Üniversitesinin Yemek Menüsünü Pratikçe Öğrenme Botu (Telegram)
 ### **Başlarken**:
 - `git clone [repo]`
