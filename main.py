@@ -5,46 +5,44 @@ from model import Models
 import pytz
 import requests
 import getmenu
-import getpdf
+import scrap
 import os
 import time
 
-yearr = datetime.datetime.now().year
-monthh = datetime.datetime.now().month
-if monthh == 12:
-  monthh = 1
-  yearr += 1
+calculatedNextYearDate = datetime.datetime.now().year
+calculatedNextMonthDate = datetime.datetime.now().month
+if calculatedNextMonthDate == 12:
+  calculatedNextMonthDate = 1
+  calculatedNextYearDate += 1
 else:
-  monthh += 1
+  calculatedNextMonthDate += 1
 
 try:
-  newList4, date = getmenu.Menu().get_menu()
+  menuList, date = getmenu.Menu().getFormattedMenu()
 except:
-  getpdf.GetPdf().get_pdf()
-  getpdf.GetPdf().convert_pdf()
-  newList4, date = getmenu.Menu().get_menu()
-
-t = True
+  scrap.ScrapMenu().getPdf()
+  scrap.ScrapMenu().convertPdfToCsv()
+  menuList, date = getmenu.Menu().getFormattedMenu()
 Token = "TOKEN"
 
 models = Models()
 models.create_table()
 
 updater = telegram.ext.Updater(
-  "TOKEN", use_context=True)
+  Token, use_context=True)
 dispatcher = updater.dispatcher
 j = updater.job_queue
 
 
-def restart_every_month(context: CallbackContext):
+def restartEveryMonth(context: CallbackContext):
   os.system("rm yemekhane.csv")
   time.sleep(60)
   os.system("kill 1")
 
 
-j.run_monthly(restart_every_month,
-              datetime.datetime(yearr,
-                                monthh,
+j.run_monthly(restartEveryMonth,
+              datetime.datetime(calculatedNextYearDate,
+                                calculatedNextMonthDate,
                                 1,
                                 tzinfo=pytz.timezone('Europe/Istanbul')),
               day=1)
@@ -71,60 +69,60 @@ def help(update, context):
 
 def getmenu(update, context):
   if context.args == []:
-    number = datetime.datetime.now().day
+    userInput = datetime.datetime.now().day
   else:
-    number = context.args[0]
-  if (int(number) > 0):
-    bn = (date[int(number) - 1] + " Tarihli Günün Menüsü")
-    bnm = newList4[int(number) - 1]
-    obnm = bn + "\n" + bnm
-    update.message.reply_text(obnm)
+    userInput = context.args[0]
+  if (int(userInput) > 0):
+    daysDate = (date[int(userInput) - 1] + " Tarihli Günün Menüsü")
+    daysMenu = menuList[int(userInput) - 1]
+    daysMenuText = daysDate + "\n" + daysMenu
+    update.message.reply_text(daysMenuText)
   #add message to database
   info = update.message
   messages_to_add(info)
 
 
-def morning(context: CallbackContext):
-  kisilistesi = models.check_all()
-  kisisayisi = len(kisilistesi)
-  i = 0
-  number = datetime.datetime.now().day
-  bn = (date[int(number) - 1] + " Tarihli Günün Menüsü")
-  bnm = newList4[int(number) - 1]
-  obnm = bn + "\n" + bnm
+def sendDaysMenu(context: CallbackContext):
+  kayitliKisiListesi = models.check_all()
+  
+  
+  userInput = datetime.datetime.now().day
+  daysDate = (date[int(userInput) - 1] + " Tarihli Günün Menüsü")
+  daysMenu = menuList[int(userInput) - 1]
+  daysMenuText = daysDate + "\n" + daysMenu
 
-  for i in range(kisisayisi):
-    id = kisilistesi[i][0]
+  for eachPerson in range(len(kayitliKisiListesi)):
+    telegramId = kayitliKisiListesi[eachPerson][0]
     try:
-      url = f"https://api.telegram.org/bot{Token}/sendMessage?chat_id={id}&text={obnm}"
+      url = f"https://api.telegram.org/bot{Token}/sendMessage?chat_id={telegramId}&text={daysMenuText}"
       requests.get(url).json()
-      i += 1
+      eachPerson += 1
     except:
-      print(f"{id} abone olmus ama yetki vermemis")
-      i += 1
+      print(f"{telegramId} abone olmus ama yetki vermemis")
+      eachPerson += 1
 
 
-j.run_daily(morning,
+j.run_daily(sendDaysMenu,
             datetime.time(hour=9,
                           minute=0,
                           tzinfo=pytz.timezone('Europe/Istanbul')),
-            days=(0, 1, 2, 3, 4, 5, 6))
+            days=("mon", "tue", "wed", "thu", "fri"))
 
 
 def abonelik(update, context):
   user = update.message.from_user
   first_name = user["first_name"]
   last_name = user["last_name"]
-  id = user["id"]
+  telegramId = user["id"]
   check_id = models.check_person(id)
   if check_id is None:
-    models.add_user(id, first_name, last_name)
+    models.add_user(telegramId, first_name, last_name)
     text = "Abonelik kaydınız oluşturuldu! Her gün Saat 09:00'da günün menüsü sizinle paylaşılacaktır."
-    url = f"https://api.telegram.org/bot{Token}/sendMessage?chat_id={id}&text={text}"
+    url = f"https://api.telegram.org/bot{Token}/sendMessage?chat_id={telegramId}&text={text}"
     requests.get(url).json()
   else:
     text = "Zaten aboneliğiniz bulunmaktadır."
-    url = f"https://api.telegram.org/bot{Token}/sendMessage?chat_id={id}&text={text}"
+    url = f"https://api.telegram.org/bot{Token}/sendMessage?chat_id={telegramId}&text={text}"
     requests.get(url).json()
   info = update.message
   messages_to_add(info)
@@ -132,17 +130,17 @@ def abonelik(update, context):
 
 def abonelikiptal(update, context):
   user = update.message.from_user
-  id = user["id"]
+  telegramId= user["id"]
   check_id = models.check_person(id)
   print(check_id)
   if check_id is None:
     text = "Aboneliğiniz bulunmamaktadır."
-    url = f"https://api.telegram.org/bot{Token}/sendMessage?chat_id={id}&text={text}"
+    url = f"https://api.telegram.org/bot{Token}/sendMessage?chat_id={telegramId}&text={text}"
     requests.get(url).json()
   else:
     models.delete_person(id)
     text = "Aboneliğiniz iptal edilmiştir."
-    url = f"https://api.telegram.org/bot{Token}/sendMessage?chat_id={id}&text={text}"
+    url = f"https://api.telegram.org/bot{Token}/sendMessage?chat_id={telegramId}&text={text}"
     requests.get(url).json()
   info = update.message
   messages_to_add(info)
@@ -152,9 +150,9 @@ def messages_to_add(info):
   user = info.from_user
   first_name = user["first_name"]
   last_name = user["last_name"]
-  id = user["id"]
+  telegramId = user["id"]
   message = info.text
-  models.add_message(id, first_name, last_name, message)
+  models.add_message(telegramId, first_name, last_name, message)
 
 
 dispatcher.add_handler(telegram.ext.CommandHandler('start', start))

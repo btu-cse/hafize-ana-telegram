@@ -3,36 +3,36 @@ import csv
 class Menu():
     def __init__(self):
       pass
-    def read_csv(self):
-      z = 0
-      status = []
+    def csvToFormattedList(self):
+      daysOfMonthCount = 0
+      menuListOfMonth = []
       with open("yemekhane.csv", encoding="utf-8") as csvfile:
-        reader = csv.reader(csvfile)
-        for row in reader:
-          status.append(row)
-          z += 1
-      return status, z
+        csvReader = csv.reader(csvfile)
+        for row in csvReader:
+          menuListOfMonth.append(row)
+          daysOfMonthCount += 1
+      return menuListOfMonth, daysOfMonthCount
 
-    def get_menu(self):
-        y = 1
-        date = []
-        newList3 = []
-        status, z = self.read_csv()
-        for _ in range(z - 2):
-            y += 1
-            date.append(status[y][0])
-            row2 = [status[y][2], status[y][3], status[y][4], status[y][5]]
-            row2 = "\n".join(row2)
-            newList3.append(row2)
-        newList4 = []
-        timer2 = 0
-        for t in newList3:
-            if t == '\n\n\n':
-                d = newList3[timer2].replace('\n\n\n', 'Haftasonu Yemek Hizmeti Yoktur')
-                newList4.append(d)
-                timer2 += 1
+    def getFormattedMenu(self):
+        excelRowCount = 1
+        dateOfMonth = []
+        sortedMenuList = []
+        menuListOfMonth, daysOfMonthCount = self.csvToFormattedList()
+        for _ in range(daysOfMonthCount - 2):
+            excelRowCount += 1
+            dateOfMonth.append(menuListOfMonth[excelRowCount][0])
+            tempMenuRow = [menuListOfMonth[excelRowCount][2], menuListOfMonth[excelRowCount][3], menuListOfMonth[excelRowCount][4], menuListOfMonth[excelRowCount][5]]
+            tempMenuRow = "\n".join(tempMenuRow)
+            sortedMenuList.append(tempMenuRow)
+        finalFormOfMenuList = []
+        daysOfMonthCount2 = 0
+        for isEmpty in sortedMenuList:
+            if isEmpty == '\n\n\n':
+                weekendText = sortedMenuList[daysOfMonthCount2].replace('\n\n\n', 'Haftasonu Yemek Hizmeti Yoktur')
+                finalFormOfMenuList.append(weekendText)
+                daysOfMonthCount2 += 1
             else:
-                newList4.append(t)
-                timer2 += 1
-        return newList4, date
+                finalFormOfMenuList.append(isEmpty)
+                daysOfMonthCount2 += 1
+        return finalFormOfMenuList, dateOfMonth
 
